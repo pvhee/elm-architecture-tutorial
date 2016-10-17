@@ -45,9 +45,7 @@ update msg model =
       (model, Random.generate NewFace (Random.pair (Random.int 1 6) (Random.int 1 6)))
 
     NewFace (newFace1, newFace2) ->
-      ({ model | dieFace1 = newFace1, dieFace2 = newFace2 }, Cmd.none)
-      --(Model newFace1, newFace2, Cmd.none)
-
+      (Model newFace1 newFace2, Cmd.none)
 
 
 -- SUBSCRIPTIONS
