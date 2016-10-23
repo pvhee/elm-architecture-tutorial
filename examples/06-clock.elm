@@ -1,11 +1,9 @@
-import Html exposing (Html, div, button)
+import Html exposing (Html, br, div, button)
+import Html.Events exposing (onClick)
 import Html.App as Html
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
---import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import Time exposing (Time, millisecond, second, minute)
-
+import Time exposing (Time, second)
 
 
 main =
@@ -23,15 +21,13 @@ main =
 
 type alias Model =
   { time: Time
-  , paused : Bool
+  , state : Bool
   }
 
 
 init : (Model, Cmd Msg)
 init =
-  (Model 0 False
-  , Cmd.none
-  )
+  (Model 0 False, Cmd.none)
 
 
 
@@ -40,7 +36,7 @@ init =
 
 type Msg
   = Tick Time
-  | Pause
+  | Toggle
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -48,9 +44,13 @@ update msg model =
   case msg of
     Tick newTime ->
       ({ model | time = newTime }, Cmd.none)
-    Pause ->
-      (model, Cmd.none)
+    Toggle ->
+      (toggleState model, Cmd.none)
 
+-- UTILITIES
+toggleState : Model -> Model
+toggleState model =
+  {model | state = not(model.state)}
 
 
 -- SUBSCRIPTIONS
@@ -58,8 +58,11 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
-  --Time.every second Tick
+  case model.state of
+    True ->
+      Time.every second Tick
+    False ->
+      Sub.none
 
 -- VIEW
 
@@ -81,5 +84,5 @@ view model =
         [ circle [ cx "50", cy "50", r "45", fill "#0B79CE" ] []
         , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke "#023963" ] []
         ]
-      , button [ onClick Pause ] [ text "Pause clock" ]
+      , button [ onClick Toggle ] [ text "Toggle clock status" ]
       ]
