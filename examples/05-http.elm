@@ -56,7 +56,7 @@ update msg model =
       (Model model.topic newUrl "", Cmd.none)
 
     FetchFail error ->
-      ({ model | errorMsg = "got an error! now just gotta figure out how to check for the type " }, Cmd.none)
+      (Model model.topic "waiting.gif" (toString error), Cmd.none)
 
     Topic topic ->
       ({ model | topic = topic }, Cmd.none)
