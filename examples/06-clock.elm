@@ -27,7 +27,7 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init =
-  (Model 0 False, Cmd.none)
+  (Model 0 True, Cmd.none)
 
 
 
@@ -71,7 +71,7 @@ view : Model -> Html Msg
 view model =
   let
     angle =
-      turns (Time.inMinutes model)
+      turns (Time.inMinutes model.time)
 
     handX =
       toString (50 + 40 * cos angle)
@@ -84,5 +84,6 @@ view model =
         [ circle [ cx "50", cy "50", r "45", fill "#0B79CE" ] []
         , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke "#023963" ] []
         ]
+      , br [] []
       , button [ onClick Toggle ] [ text "Toggle clock status" ]
       ]
