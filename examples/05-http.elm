@@ -10,7 +10,7 @@ import Task
 
 main =
   Html.program
-    { init = init "cats"
+    { init = init "dogs"
     , view = view
     , update = update
     , subscriptions = subscriptions
@@ -24,12 +24,13 @@ main =
 type alias Model =
   { topic : String
   , gifUrl : String
+  , errorMsg : String
   }
 
 
 init : String -> (Model, Cmd Msg)
 init topic =
-  ( Model topic "waiting.gif"
+  ( Model topic "waiting.gif" ""
   , getRandomGif topic
   )
 
@@ -40,6 +41,7 @@ init topic =
 
 type Msg
   = MorePlease
+  | Topic String
   | FetchSucceed String
   | FetchFail Http.Error
 
@@ -51,10 +53,13 @@ update msg model =
       (model, getRandomGif model.topic)
 
     FetchSucceed newUrl ->
-      (Model model.topic newUrl, Cmd.none)
+      (Model model.topic newUrl "", Cmd.none)
 
-    FetchFail _ ->
-      (model, Cmd.none)
+    FetchFail error ->
+      ({ model | errorMsg = "got an error! now just gotta figure out how to check for the type " }, Cmd.none)
+
+    Topic topic ->
+      ({ model | topic = topic }, Cmd.none)
 
 
 
@@ -65,9 +70,11 @@ view : Model -> Html Msg
 view model =
   div []
     [ h2 [] [text model.topic]
+    , input [ type' "text", placeholder "Topic", onInput Topic ] []
     , button [ onClick MorePlease ] [ text "More Please!" ]
     , br [] []
     , img [src model.gifUrl] []
+    , div [] [ text model.errorMsg ]
     ]
 
 
